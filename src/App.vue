@@ -1,0 +1,218 @@
+<template>
+  <div class="common-container">
+      <HeaderRow />
+    <div class="common-change">
+      <router-view />
+    </div>
+      <FooterRow />
+<!--    <a href="#" class="back-to-top d-flex align-items-center justify-content-center">Hello<i class="fa-solid fa-arrow-up"></i></a>-->
+
+  </div>
+</template>
+
+<script>
+
+
+import HeaderRow from "@/components/HeaderRow";
+import FooterRow from "@/components/FooterRow";
+import {mapActions, mapGetters} from "vuex";
+
+
+export default {
+  name: 'App',
+  components: {FooterRow, HeaderRow},
+  computed: {
+    ...mapGetters(['isAuthorized', 'getRefreshToken'])
+  },
+  methods: {
+    ...mapActions(['fetchToken', 'fetchAboutMe', 'refreshToken'])
+  },
+  mounted() {
+    if(this.isAuthorized) {
+        this
+            .fetchAboutMe()
+            .catch(() => {
+                this
+                    .refreshToken({
+                      refreshToken: this.getRefreshToken
+                    })
+                    .catch(() => {
+                      this.$router.push('/login')
+                    })
+            })
+    }
+  }
+
+
+}
+</script>
+
+<style>
+/*--------------------------------------------------------------
+# General
+--------------------------------------------------------------*/
+a {
+  color: #5fcf80;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #86db9f;
+  text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Raleway", sans-serif;
+}
+
+/*--------------------------------------------------------------
+# Back to top button
+--------------------------------------------------------------*/
+.back-to-top {
+  position: fixed;
+  visibility: hidden;
+  opacity: 0;
+  right: 15px;
+  bottom: 15px;
+  z-index: 996;
+  background: #5fcf80;
+  width: 40px;
+  height: 40px;
+  border-radius: 50px;
+  transition: all 0.4s;
+}
+.back-to-top i {
+  font-size: 28px;
+  color: #fff;
+  line-height: 0;
+}
+.back-to-top:hover {
+  background: #7ed899;
+  color: #fff;
+}
+.back-to-top.active {
+  visibility: visible;
+  opacity: 1;
+}
+/*--------------------------------------------------------------
+# Preloader
+--------------------------------------------------------------*/
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  overflow: hidden;
+  background: #fff;
+}
+
+#preloader:before {
+  content: "";
+  position: fixed;
+  top: calc(50% - 30px);
+  left: calc(50% - 30px);
+  border: 6px solid #5fcf80;
+  border-top-color: #fff;
+  border-bottom-color: #fff;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  -webkit-animation: animate-preloader 1s linear infinite;
+  animation: animate-preloader 1s linear infinite;
+}
+
+@-webkit-keyframes animate-preloader {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes animate-preloader {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/*--------------------------------------------------------------
+# Disable aos animation delay on mobile devices
+--------------------------------------------------------------*/
+@media screen and (max-width: 768px) {
+  [data-aos-delay] {
+    transition-delay: 0 !important;
+  }
+}
+
+/*--------------------------------------------------------------
+# Sections General
+--------------------------------------------------------------*/
+section {
+  padding: 60px 0;
+  overflow: hidden;
+}
+
+.section-bg {
+  background-color: #f6f7f6;
+}
+
+.section-title {
+  padding-bottom: 40px;
+}
+.section-title h2 {
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0;
+  line-height: 1px;
+  margin: 0 0 5px 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #aaaaaa;
+  font-family: "Poppins", sans-serif;
+}
+.section-title h2::after {
+  content: "";
+  width: 120px;
+  height: 1px;
+  display: inline-block;
+  background: #9ae1af;
+  margin: 4px 10px;
+}
+.section-title p {
+  margin: 0;
+  margin: 0;
+  font-size: 36px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-family: "Poppins", sans-serif;
+  color: #37423b;
+}
+
+.breadcrumbs {
+  margin-top: 73px;
+  text-align: center;
+  background: #5fcf80;
+  padding: 30px 0;
+  color: #fff;
+}
+@media (max-width: 992px) {
+  .breadcrumbs {
+    margin-top: 63px;
+  }
+}
+.breadcrumbs h2 {
+  font-size: 32px;
+  font-weight: 500;
+}
+.breadcrumbs p {
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+</style>
